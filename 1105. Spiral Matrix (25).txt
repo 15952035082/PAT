@@ -1,0 +1,83 @@
+1105. Spiral Matrix (25)
+
+时间限制
+150 ms
+内存限制
+65536 kB
+代码长度限制
+16000 B
+判题程序
+Standard
+作者
+CHEN, Yue
+This time your job is to fill a sequence of N positive integers into a spiral matrix in non-increasing order. A spiral matrix is filled in from the first element at the upper-left corner, then move in a clockwise spiral. The matrix has m rows and n columns, where m and n satisfy the following: m*n must be equal to N; m>=n; and m-n is the minimum of all the possible values.
+
+Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer N. Then the next line contains N positive integers to be filled into the spiral matrix. All the numbers are no more than 104. The numbers in a line are separated by spaces.
+
+Output Specification:
+
+For each test case, output the resulting matrix in m lines, each contains n numbers. There must be exactly 1 space between two adjacent numbers, and no extra space at the end of each line.
+
+Sample Input:
+12
+37 76 20 98 76 42 53 95 60 81 58 93
+Sample Output:
+98 95 93
+42 37 81
+53 20 76
+58 60 76
+
+
+
+#include<iostream> 
+#include<vector>
+#include<cstdio>
+#include<map>
+#include<cmath>
+#include<climits>
+#include<cstring>
+#include<string>
+#include<deque>
+#include<algorithm>
+#include<queue>
+#include<stack>
+using namespace std;
+vector<int> vc;
+int func(int n){
+	int i=sqrt(n);
+	while(i>=1){
+		if(n%i==0)break;
+		i--;
+	}
+	return i;
+}
+bool cmp(int a,int b){
+	return a>b;
+}
+int main(){
+	int n;
+	cin>>n;
+	vc.resize(n);
+	for(int i=0;i<n;i++)scanf("%d",&vc[i]);
+	sort(vc.begin(),vc.end(),cmp);
+	int column=func(n);
+	int row=n/column;
+	int cnt=0;
+	vector<vector<int> > res(row,vector<int>(column));
+	for(int i=0;i<row;i++){
+		for(int j=i;j<=column-i-1 &&cnt<n;j++)res[i][j]=vc[cnt++];
+		for(int j=i+1;j<=row-2-i &&cnt<n;j++)res[j][column-1-i]=vc[cnt++];
+		for(int j=column-i-1;j>=i&&cnt<n;j--)res[row-1-i][j]=vc[cnt++];
+		for(int j=row-2-i;j>=i+1&&cnt<n;j--)res[j][i]=vc[cnt++];
+	}
+	for(int i=0;i<row;i++){
+		for(int j=0;j<column;j++){
+			cout<<res[i][j];
+			if(j!=column-1)cout<<" ";
+		}
+		cout<<endl;
+	}
+	return 0;
+} 

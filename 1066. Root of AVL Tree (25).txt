@@ -1,0 +1,118 @@
+1066. Root of AVL Tree (25)
+
+时间限制
+100 ms
+内存限制
+65536 kB
+代码长度限制
+16000 B
+判题程序
+Standard
+作者
+CHEN, Yue
+An AVL tree is a self-balancing binary search tree. In an AVL tree, the heights of the two child subtrees of any node differ by at most one; if at any time they differ by more than one, rebalancing is done to restore this property. Figures 1-4 illustrate the rotation rules.
+
+    
+    
+Now given a sequence of insertions, you are supposed to tell the root of the resulting AVL tree.
+
+Input Specification:
+
+Each input file contains one test case. For each case, the first line contains a positive integer N (<=20) which is the total number of keys to be inserted. Then N distinct integer keys are given in the next line. All the numbers in a line are separated by a space.
+
+Output Specification:
+
+For each test case, print ythe root of the resulting AVL tree in one line.
+
+Sample Input 1:
+5
+88 70 61 96 120
+Sample Output 1:
+70
+Sample Input 2:
+7
+88 70 61 96 120 90 65
+Sample Output 2:
+88
+
+
+#include<iostream> 
+#include<vector>
+#include<cstdio>
+#include<map>
+#include<cmath>
+#include<climits>
+#include<cstring>
+#include<string>
+#include<deque>
+#include<algorithm>
+#include<queue>
+using namespace std;
+struct node{
+	int value;
+	node *lchild,*rchild;
+	node(){
+		lchild=NULL;
+		rchild=NULL;
+	}
+};
+node *rotateleft(node *root){
+	node *t=root->rchild;
+	root->rchild=t->lchild;
+	t->lchild=root;
+	return t;
+}
+node *rotateright(node *root){
+	node *t=root->lchild;
+	root->lchild=t->rchild;
+	t->rchild=root;
+	return t;
+}
+node *rotateleftright(node *root){
+	root->lchild=rotateleft(root->lchild);
+	root=rotateright(root);
+	return root;
+}
+node *rotaterightleft(node *root){
+	root->rchild=rotateright(root->rchild);
+	root=rotateleft(root);
+	return root;
+}
+int getheight(node *root){
+	if(!root)return 0;
+	return max(getheight(root->lchild),getheight(root->rchild))+1 ;
+}
+node * build(node *root,int val){
+	if(!root){
+		root=new node();
+		root->value=val;
+	}
+	else {
+		if(root->value >val){
+			root->lchild=build(root->lchild,val);
+			if(getheight(root->lchild)-getheight(root->rchild)==2 ){
+				root=val<root->lchild->value ?rotateright(root):rotateleftright(root);
+			}
+		}
+		else {
+			root->rchild=build(root->rchild,val);
+			if(getheight(root->lchild)-getheight(root->rchild)==-2){
+				root=val>root->rchild->value ?rotateleft(root):rotaterightleft(root);
+			}
+		}
+	}
+	return root;
+}
+int main(){
+	int n;
+	cin>>n;
+	node *root=NULL;
+	for(int i=0;i<n;i++){
+		int temp;
+		cin>>temp;
+		root=build(root,temp);
+	}
+	cout<<root->value;
+	return 0;
+	
+} 

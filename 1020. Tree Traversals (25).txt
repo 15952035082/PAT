@@ -1,0 +1,93 @@
+1020. Tree Traversals (25)
+
+时间限制
+400 ms
+内存限制
+65536 kB
+代码长度限制
+16000 B
+判题程序
+Standard
+作者
+CHEN, Yue
+Suppose that all the keys in a binary tree are distinct positive integers. Given the postorder and inorder traversal sequences, you are supposed to output the level order traversal sequence of the corresponding binary tree.
+
+Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer N (<=30), the total number of nodes in the binary tree. The second line gives the postorder sequence and the third line gives the inorder sequence. All the numbers in a line are separated by a space.
+
+Output Specification:
+
+For each test case, print in one line the level order traversal sequence of the corresponding binary tree. All the numbers in a line must be separated by exactly one space, and there must be no extra space at the end of the line.
+
+Sample Input:
+7
+2 3 1 5 7 6 4
+1 2 3 4 5 6 7
+Sample Output:
+4 1 6 3 5 7 2
+
+
+
+#include<iostream> 
+#include<vector>
+#include<cstdio>
+#include<map>
+#include<cmath>
+#include<climits>
+#include<cstring>
+#include<string>
+#include<deque>
+using namespace std;
+int n;
+int post[35],visited[35];
+int postor[35],inor[35];
+int right_size(int root){
+	int size=0;
+	for(int i=inor[root]+1;i<n;i++ ){
+		if(visited[i])break;
+		size++;
+	}
+	return size;
+}
+int main(){
+	cin>>n;
+	for(int i=0;i<n;i++){
+		cin>>post[i];
+		postor[post[i]]=i;
+		visited[post[i]]=0;
+	}
+	for(int i=0;i<n;i++){
+		int temp;
+		cin>>temp;
+		inor[temp]=i;
+	}
+	deque<int> dq;
+	dq.push_back(post[n-1]);
+	vector<int> res;
+	visited[inor[post[n-1]]]=1;
+	res.push_back(post[n-1]);
+	while(!dq.empty()){
+		int now=dq.front();
+		dq.pop_front();
+		int rsize=right_size(now);
+		int left=postor[now]-rsize-1;
+		if(left>=0 &&visited[inor[post[left]]]==0){
+			dq.push_back(post[left]);
+			res.push_back(post[left]);
+			visited[inor[post[left]]]=1;
+		}
+		int right=postor[now]-1;	
+		if(right>=0 &&visited[inor[post[right]]]==0){
+			dq.push_back(post[right]);
+			res.push_back(post[right]);
+			visited[inor[post[right]]]=1;
+		}
+	}
+	for(int i=0;i<n;i++){
+		cout<<res[i];
+		if(i!=n-1)cout<<" ";
+	}
+	return 0;
+	
+} 

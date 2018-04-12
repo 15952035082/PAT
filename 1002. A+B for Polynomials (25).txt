@@ -1,0 +1,104 @@
+1002. A+B for Polynomials (25)
+
+时间限制
+400 ms
+内存限制
+65536 kB
+代码长度限制
+16000 B
+判题程序
+Standard
+作者
+CHEN, Yue
+This time, you are supposed to find A+B where A and B are two polynomials.
+
+Input
+
+Each input file contains one test case. Each case occupies 2 lines, and each line contains the information of a polynomial: K N1 aN1 N2 aN2 ... NK aNK, where K is the number of nonzero terms in the polynomial, Ni and aNi (i=1, 2, ..., K) are the exponents and coefficients, respectively. It is given that 1 <= K <= 10，0 <= NK < ... < N2 < N1 <=1000.
+
+Output
+
+For each test case you should output the sum of A and B in one line, with the same format as the input. Notice that there must be NO extra space at the end of each line. Please be accurate to 1 decimal place.
+
+Sample Input
+2 1 2.4 0 3.2
+2 2 1.5 1 0.5
+Sample Output
+3 2 1.5 1 2.9 0 3.2
+
+
+
+#include<iostream>
+#include<vector>
+#include<cstdio>
+using namespace std;
+
+int main(){
+	int n,m;
+	scanf("%d",&n);
+	n*=2;
+	double *a=new double[n];
+	for(int i=0;i<n;i+=2){
+		scanf("%lf %lf",&a[i],&a[i+1]);
+	}
+	scanf("%d",&m);
+	m*=2;
+	double *b=new double[m];
+	for(int i=0;i<m;i+=2){
+		scanf("%lf %lf",&b[i],&b[i+1]);
+	}
+	int size=0;
+	vector<double> vc;
+	for(int i=0,j=0;i<n ||j<m;){
+		
+		if(i==n){
+			for(j;j<m;j+=2){
+				size++;
+				vc.push_back(b[j]);
+				vc.push_back(b[j+1]);
+				
+			}
+			break;
+		}
+		if(j==m){
+			for(i;i<n;i+=2){
+				size++;
+				vc.push_back(a[i]);
+				vc.push_back(a[i+1]);
+			}
+			break;
+		}
+		if(a[i]==b[j]){
+			double temp;
+			temp=a[i+1]+b[j+1];
+			i+=2;j+=2;
+			if(temp!=0){
+				size++;
+				vc.push_back(a[i-2]);
+				vc.push_back(temp);
+			}
+		}
+		else if(a[i]>b[j]){
+			size++;
+			vc.push_back(a[i]);
+			vc.push_back(a[i+1]);
+			i+=2;
+		}
+		else {
+			size++;
+			vc.push_back(b[j]);
+			vc.push_back(b[j+1]);
+			j+=2;
+		}
+	}
+	if(size==0)printf("0");
+	else {
+		printf("%d",size);
+		for(int i=0;i<2*size;i+=2){
+			printf(" %g %.1f",vc[i],vc[i+1]);
+		}
+	}
+	
+	return 0;
+	
+} 

@@ -1,0 +1,134 @@
+1017. Queueing at Bank (25)
+
+时间限制
+400 ms
+内存限制
+65536 kB
+代码长度限制
+16000 B
+判题程序
+Standard
+作者
+CHEN, Yue
+Suppose a bank has K windows open for service. There is a yellow line in front of the windows which devides the waiting area into two parts. All the customers have to wait in line behind the yellow line, until it is his/her turn to be served and there is a window available. It is assumed that no window can be occupied by a single customer for more than 1 hour.
+
+Now given the arriving time T and the processing time P of each customer, you are supposed to tell the average waiting time of all the customers.
+
+Input Specification:
+
+Each input file contains one test case. For each case, the first line contains 2 numbers: N (<=10000) - the total number of customers, and K (<=100) - the number of windows. Then N lines follow, each contains 2 times: HH:MM:SS - the arriving time, and P - the processing time in minutes of a customer. Here HH is in the range [00, 23], MM and SS are both in [00, 59]. It is assumed that no two customers arrives at the same time.
+
+Notice that the bank opens from 08:00 to 17:00. Anyone arrives early will have to wait in line till 08:00, and anyone comes too late (at or after 17:00:01) will not be served nor counted into the average.
+
+Output Specification:
+
+For each test case, print in one line the average waiting time of all the customers, in minutes and accurate up to 1 decimal place.
+
+Sample Input:
+7 3
+07:55:00 16
+17:00:01 2
+07:59:59 15
+08:01:00 60
+08:00:00 30
+08:00:02 2
+08:03:00 10
+Sample Output:
+8.2
+
+
+
+
+#include<iostream> 
+#include<vector>
+#include<cstdio>
+#include<map>
+#include<cmath>
+#include<climits>
+#include<cstring>
+#include<string>
+#include<deque>
+#include<algorithm>
+#include<queue>
+#include<stack>
+#include<set>
+using namespace std;
+const int  ddl =61200;
+const int sst= 28800;
+int n,k;
+struct Node{
+	int come,time;
+};
+struct node{
+	int endtime;
+};
+int gettime(){
+	int hour,minute,second;
+	cin>>hour;getchar();
+	cin>>minute;getchar();
+	cin>>second;getchar();
+	return hour*3600+minute*60+second;
+}
+bool cmp(Node a,Node b){
+	return a.come<b.come;
+}
+int main(){
+	scanf("%d%d",&n,&k);
+	node *window=new node[k+1];
+	int cnt=0,people=0;
+	int sumwait=0;
+	Node *time=new Node[n];
+	for(int i=0;i<n;i++){
+		int tim=gettime();
+		time[i].come=tim;
+		scanf("%d",&time[i].time);
+		if(time[i].time>60)time[i].time=3600;
+		else time[i].time*=60;
+	}
+	sort(time,time+n,cmp);
+	bool flag=true;
+	for(int i=1;i<=k;i++){
+		if(cnt<n){
+			int tim=time[cnt].come;
+			if(tim>ddl){
+				break;flag=false;
+			}
+			else if(tim<=sst){
+				people++;
+				sumwait+=sst-tim;
+				window[i].endtime=time[cnt].time+sst;
+			}
+			else{
+				people++;
+				window[i].endtime=time[cnt].time+tim;
+			}
+			cnt++;
+		}
+	}
+	while(cnt<n &&flag){
+		int tempwindow=1;
+		for(int i=2;i<=k;i++)if(window[i].endtime <window[tempwindow].endtime)tempwindow=i;
+		int tim=time[cnt].come;
+		if(time[cnt].come>ddl)break;
+	//	if(window[tempwindow].endtime>ddl)break;  //题目中说只要是17点过一分之前来，这里不需要限制； 
+		else {
+			if(tim<=window[tempwindow].endtime){
+				sumwait+=window[tempwindow].endtime-tim;
+				window[tempwindow].endtime+=time[cnt].time;
+				people++;
+			}
+			else {
+				window[tempwindow].endtime=tim+time[cnt].time;
+				people++;
+			}
+			cnt++;
+		}
+	}if(people ==0){
+		cout<<"0.0";
+	}
+	else {
+		double ave =(double)1.0*sumwait/(people*60);
+		printf("%.1f",ave);
+	}
+	return 0;
+}

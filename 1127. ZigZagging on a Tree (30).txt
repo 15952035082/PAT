@@ -1,0 +1,100 @@
+1127. ZigZagging on a Tree (30)
+
+时间限制
+400 ms
+内存限制
+65536 kB
+代码长度限制
+16000 B
+判题程序
+Standard
+作者
+CHEN, Yue
+Suppose that all the keys in a binary tree are distinct positive integers. A unique binary tree can be determined by a given pair of postorder and inorder traversal sequences. And it is a simple standard routine to print the numbers in level-order. However, if you think the problem is too simple, then you are too naive. This time you are supposed to print the numbers in "zigzagging order" -- that is, starting from the root, print the numbers level-by-level, alternating between left to right and right to left. For example, for the following tree you must output: 1 11 5 8 17 12 20 15.
+
+
+Input Specification:
+
+Each input file contains one test case. For each case, the first line gives a positive integer N (<= 30), the total number of nodes in the binary tree. The second line gives the inorder sequence and the third line gives the postorder sequence. All the numbers in a line are separated by a space.
+
+Output Specification:
+
+For each test case, print the zigzagging sequence of the tree in a line. All the numbers in a line must be separated by exactly one space, and there must be no extra space at the end of the line.
+
+Sample Input:
+8
+12 11 20 17 1 15 8 5
+12 20 17 11 15 8 5 1
+Sample Output:
+1 11 5 8 17 12 20 15
+
+
+
+
+#include<iostream> 
+#include<vector>
+#include<cstdio>
+#include<map>
+#include<cmath>
+#include<climits>
+#include<cstring>
+#include<string>
+#include<deque>
+#include<algorithm>
+#include<queue>
+#include<stack>
+using namespace std;
+int root,tree[35][2],level[35],maxlevel=0;  // 
+map<int,vector<int> > arr;
+vector<int> inorder,postorder; 
+void build(int & cur, int inorl,int inorr,int postl,int postr){
+		if(inorl >inorr)return ;
+		cur=postr;
+		int i=inorl;
+		while(inorder[i]!= postorder[postr])i++;
+		build(tree[cur][0], inorl,i-1,postl,postl+i-inorl-1 );
+		build(tree[cur][1],i+1,inorr,postl+i-inorl,postr-1 );
+		return ;
+}
+int main(){
+	int n;
+	cin>>n;
+	inorder.resize(n+1);
+	postorder.resize(n+1);
+	for(int i=1;i<=n;i++)scanf("%d",&inorder[i]);
+	for(int i=1;i<=n;i++)scanf("%d",&postorder[i]);
+	build(root,1,n,1,n);
+	level[root]=1;
+	deque<int> dq;
+	dq.push_back(root);
+	arr[1].push_back(root);
+	while(!dq.empty()){
+		int now=dq.front();
+		dq.pop_front();
+		if(tree[now][0]>0){
+			level[tree[now][0]]=level[now]+1;
+			if(level[tree[now][0]]>maxlevel)maxlevel=level[tree[now][0]];
+			arr[level[now]+1].push_back(tree[now][0]);
+			dq.push_back(tree[now][0]);
+		}
+		if(tree[now][1]>0){
+			level[tree[now][1]]=level[now]+1;
+			if(level[tree[now][1]]>maxlevel)maxlevel=level[tree[now][1]];
+			arr[level[now]+1].push_back(tree[now][1]);
+			dq.push_back(tree[now][1]);
+		}
+	}
+	cout<<postorder[arr[1][0]];
+	for(int i=2;i<=maxlevel;i++){
+		if(i%2 ==0){
+			for(int j=0;j<arr[i].size();j++){
+				cout<<" "<<postorder[arr[i][j]];
+			}
+		}
+		else for(int j=arr[i].size()-1;j>=0;j--){
+			cout<<" "<<postorder[arr[i][j]];
+		}
+	}
+	return 0;
+} 
+
